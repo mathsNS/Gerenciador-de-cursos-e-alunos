@@ -1,5 +1,7 @@
 
 # **Gerenciador de Cursos e Alunos**
+![Status](https://img.shields.io/badge/Projeto-Semana%201-purple)
+![Python](https://img.shields.io/badge/Python-3.11+-blue)
 
 ## **Descrição do Projeto**
 
@@ -174,6 +176,7 @@ pytest
 ```
 
 ---
+
 
 
 
