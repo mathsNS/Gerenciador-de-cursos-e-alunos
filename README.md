@@ -3,9 +3,9 @@
 
 ## **Descrição do Projeto**
 
-Sistema acadêmico em Python, com interface **CLI** (linha de comando), voltado para o gerenciamento de cursos, turmas, alunos e matrículas.
+Sistema acadêmico em Python, com interface CLI (linha de comando), voltado para o gerenciamento de cursos, turmas, alunos e matrículas.
 Inclui controle de pré-requisitos, vagas, choque de horários, notas, frequência, cálculo de CR, além de relatórios acadêmicos.
-O foco é aplicar de forma sólida os princípios de **Programação Orientada a Objetos**: herança, encapsulamento, métodos especiais e validações.
+O foco é aplicar de forma sólida os princípios de Programação Orientada a Objetos: herança, encapsulamento, métodos especiais e validações.
 
 ---
 
@@ -20,8 +20,8 @@ Implementar um sistema completo seguindo todos os requisitos definidos no docume
 * Testes automatizados com pytest
 * Interface mínima via CLI
 
-O objetivo central é consolidar o domínio de **POO em Python**, incluindo uso correto de propriedades, validações, herança e métodos especiais.
-
+O objetivo central é consolidar o domínio de POO em Python, incluindo uso correto de propriedades, validações, herança e métodos especiais.
+Uma etapa do projeto é realizada por semana, com os commits finais de cada semana de desenvolvimento explicitados.
 ---
 
 ## **Arquitetura**
@@ -30,11 +30,11 @@ A arquitetura segue uma divisão simples e objetiva:
 
 ```
 Entrada do usuário (CLI)
-      ↓
+      
 Camada de Serviços (regras de negócio)
-      ↓
+      
 Modelos de Dados (entidades)
-      ↓
+      
 Persistência (JSON ou SQLite)
 ```
 
@@ -141,9 +141,9 @@ projeto_academico/
 
 O projeto pode usar:
 
-* **JSON** (persistência simples)
+* JSON (persistência simples)
   ou
-* **SQLite** (via `sqlite3`)
+* SQLite (via `sqlite3`)
 
 O módulo `dados.py` abstrai leitura/escrita.
 
@@ -170,3 +170,4 @@ pytest
 ```
 
 ---
+
