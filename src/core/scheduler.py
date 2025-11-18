@@ -1,0 +1,1 @@
+"""Modulo responsavel pela logica do choque de horarios"""

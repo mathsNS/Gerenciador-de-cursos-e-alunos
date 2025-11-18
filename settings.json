@@ -1,0 +1,6 @@
+{
+    "nota_minima_aprovacao": 6.0,
+    "frequencia_minima": 75,
+    "data_limite_trancamento": "2025-05-10",
+    "top_n_alunos": 5
+}
