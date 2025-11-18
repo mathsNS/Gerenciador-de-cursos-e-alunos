@@ -19,10 +19,10 @@ Implementar um sistema completo seguindo todos os requisitos definidos no docume
 * Persistência em JSON ou SQLite
 * Testes automatizados com pytest
 * Interface mínima via CLI
+---
 
 O objetivo central é consolidar o domínio de POO em Python, incluindo uso correto de propriedades, validações, herança e métodos especiais.
 Uma etapa do projeto é realizada por semana, com os commits finais de cada semana de desenvolvimento explicitados.
----
 
 ## **Flask**
 
@@ -174,6 +174,7 @@ pytest
 ```
 
 ---
+
 
 
 
