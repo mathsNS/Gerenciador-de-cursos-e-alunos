@@ -16,7 +16,7 @@ O foco é aplicar de forma sólida os princípios de Programação Orientada a O
 Implementar um sistema completo seguindo todos os requisitos definidos no documento oficial do projeto, aplicando:
 
 * Estruturação OO com classes bem definidas
-* Relacionamentos entre entidades
+* Relacionamentos entre entidades(1:1, 1:N, N:M)
 * Configurações e regras acadêmicas
 * Persistência em JSON ou SQLite
 * Testes automatizados com pytest
@@ -52,19 +52,21 @@ Persistência (JSON ou SQLite)
 
 * Atributos: nome, email
 * Herdada por: **Aluno**
+* Relacionamentos: 1:N com Aluno (uma pessoa → um aluno)
 
 ### **2. Aluno (Pessoa)**
 
 * Atributos: matrícula, histórico (notas + frequência), CR
 * Métodos: cálculo de CR
 * Método especial: `__lt__` para ordenação por CR
-* Relacionamento: possui várias **Matrículas**
+* Relacionamentos: 1:N com Matricula (um aluno → várias matrículas)
 
 ### **3. Curso**
 
 * Atributos: código, nome, carga horária, pré-requisitos
 * Método especial: `__str__` e `__repr__`
 * Validações: evitar ciclos de pré-requisitos
+* Relacionamentos: 1:N com Turma (um curso → várias turmas)
 
 ### **4. Oferta (base)**
 
@@ -76,14 +78,14 @@ Persistência (JSON ou SQLite)
 * Atributos: id, vagas, local, lista de alunos
 * Métodos: abrir/fechar, verificar choque de horários
 * Método especial: `__len__` → retorna ocupação atual
-* Relacionamento: está vinculada a um **Curso**
+* Relacionamentos: N:1 com Curso; 1:N com Matricula (uma turma → várias matrículas)
 
 ### **6. Matrícula**
 
 * Atributos: notas, frequência, situação
 * Métodos: lançar nota, lançar frequência, calcular situação
 * Método especial: `__eq__` (aluno + turma)
-* Relacionamento: conecta **Aluno** ↔ **Turma**
+* Relacionamentos: conecta Aluno ↔ Turma (N:M via matrícula)
 
 ---
 
@@ -176,6 +178,7 @@ pytest
 ```
 
 ---
+
 
 
 
