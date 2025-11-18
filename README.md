@@ -24,6 +24,11 @@ O objetivo central é consolidar o domínio de POO em Python, incluindo uso corr
 Uma etapa do projeto é realizada por semana, com os commits finais de cada semana de desenvolvimento explicitados.
 ---
 
+## **Flask**
+
+Flask é um framework para desenvolvimento web em Python que fornece apenas os componentes essenciais para a criação de aplicações, permitindo alto nível de flexibilidade e personalização. Ele utiliza uma arquitetura minimalista, baseada em rotas e funções, facilitando a construção de APIs, sistemas modulares e interfaces web de forma simples e organizada. No projeto, o Flask será utilizado para estruturar a aplicação, gerenciar rotas, controlar requisições e integrar as funcionalidades dos módulos internos.
+---
+
 ## **Arquitetura**
 
 A arquitetura segue uma divisão simples e objetiva:
@@ -170,4 +175,5 @@ pytest
 ```
 
 ---
+
 
