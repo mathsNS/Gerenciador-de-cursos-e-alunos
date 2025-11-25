@@ -1,5 +1,13 @@
-from .pessoa import Pessoa
+class Aluno:
+    def __init__(self, matricula, nome, email):
+        self.matricula = matricula
+        self.nome = nome
+        self.email = email
+        self.historico = []
 
-class Aluno(Pessoa):
-    """representa um aluno com matricula, nome, email e historico."""
-    pass
+    @property
+    def cr(self):
+        if not self.historico:
+            return 0
+        notas = [item["nota"] for item in self.historico]
+        return sum(notas) / len(notas)
