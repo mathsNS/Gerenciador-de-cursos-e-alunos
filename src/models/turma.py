@@ -1,15 +1,19 @@
 class Turma:
-    def __init__(self, id_turma, codigo_curso, periodo, horarios, vagas):
+    def __init__(self, id_turma, codigo_curso, periodo, horarios, vagas, local=None):
         self.id_turma = id_turma
         self.codigo_curso = codigo_curso
         self.periodo = periodo
-        self.horarios = horarios
+        self.horarios = horarios  # {"ter":"10:00-12:00"}
         self.vagas = vagas
+        self.local = local
         self.matriculas = []
+        self.aberta = True
 
     def __len__(self):
-        return len(self.matriculas)
+        return len([m for m in self.matriculas if m.ativa])
 
-    @property
-    def vagas_disponiveis(self):
-        return self.vagas - len(self.matriculas)
+    def tem_vaga(self):
+        return len(self) < self.vagas
+
+    def fechar(self):
+        self.aberta = False
