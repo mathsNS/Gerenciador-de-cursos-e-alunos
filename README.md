@@ -5,7 +5,7 @@
 
 ## **Descrição do Projeto**
 
-Sistema acadêmico em Python, com interface CLI (linha de comando), voltado para o gerenciamento de cursos, turmas, alunos e matrículas.
+Sistema acadêmico em Python, voltado para o gerenciamento de cursos, turmas, alunos e matrículas.
 Inclui controle de pré-requisitos, vagas, choque de horários, notas, frequência, cálculo de CR, além de relatórios acadêmicos.
 O foco é aplicar de forma sólida os princípios de Programação Orientada a Objetos: herança, encapsulamento, métodos especiais e validações.
 
@@ -184,6 +184,7 @@ uvicorn main:app --reload
 O comando abaixo inicia a aplicação e disponibiliza a documentação automática em /docs (Swagger UI) e /redoc:
 
 ---
+
 
 
 
