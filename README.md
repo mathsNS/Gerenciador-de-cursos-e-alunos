@@ -1,6 +1,6 @@
 
 # **Gerenciador de Cursos e Alunos**
-![Status](https://img.shields.io/badge/Projeto-Semana%201-purple)
+![Status](https://img.shields.io/badge/Projeto-Semana%204-purple)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue)
 
 ## **Descrição do Projeto**
@@ -26,16 +26,16 @@ Implementar um sistema completo seguindo todos os requisitos definidos no docume
 O objetivo central é consolidar o domínio de POO em Python, incluindo uso correto de propriedades, validações, herança e métodos especiais.
 Uma etapa do projeto é realizada por semana, com os commits finais de cada semana de desenvolvimento explicitados.
 
-## **Flask**
+## **FastAPI**
 
-Flask é um framework para desenvolvimento web em Python que fornece apenas os componentes essenciais para a criação de aplicações, permitindo alto nível de flexibilidade e personalização. Ele utiliza uma arquitetura minimalista, baseada em rotas e funções, facilitando a construção de APIs, sistemas modulares e interfaces web de forma simples e organizada. No projeto, o Flask será utilizado para estruturar a aplicação, gerenciar rotas, controlar requisições e integrar as funcionalidades dos módulos internos.
+FastAPI é um framework moderno para criação de APIs em Python, focado em alta performance e validação automática de dados. Ele utiliza tipagem padrão do Python para gerar documentação interativa em tempo real (Swagger e Redoc) e facilita a criação de endpoints organizados para operações como matrícula, lançamento de notas e frequência. No projeto, o FastAPI funciona como a interface de acesso ao sistema, expondo rotas que acionam as regras de negócio implementadas no núcleo da aplicação. Essa camada permite integração com clientes externos, testes via HTTP e uso prático das funcionalidades do gerenciador acadêmico.
 
 ## **Arquitetura**
 
 A arquitetura segue uma divisão simples e objetiva:
 
 ```
-Entrada do usuário (CLI)
+Entrada do usuário
       
 Camada de Serviços (regras de negócio)
       
@@ -150,8 +150,6 @@ projeto_academico/
 O projeto pode usar:
 
 * JSON (persistência simples)
-  ou
-* SQLite (via `sqlite3`)
 
 O módulo `dados.py` abstrai leitura/escrita.
 
@@ -163,12 +161,12 @@ Pré-requisitos:
 
 ```
 Python 3.11+
+Uvicorn
 ```
-
-Rodar via CLI:
+Instalar dependências:
 
 ```
-python -m cli.main
+pip install -r requirements.txt
 ```
 
 Rodar testes:
@@ -177,7 +175,16 @@ Rodar testes:
 pytest
 ```
 
+Rodar sistema: 
+
+```
+uvicorn main:app --reload
+```
+
+O comando abaixo inicia a aplicação e disponibiliza a documentação automática em /docs (Swagger UI) e /redoc:
+
 ---
+
 
 
 
