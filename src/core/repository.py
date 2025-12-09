@@ -3,34 +3,52 @@ from pathlib import Path
 from typing import Dict, Any
 
 class Repository:
-    def __init__(self, data_dir: str = "data"):
-        self.cursos: Dict[str, Any] = {}
-        self.alunos: Dict[str, Any] = {}
-        self.turmas: Dict[str, Any] = {}
-        self.matriculas: Dict[str, Any] = {}
+    def __init__(self, data_dir="data", mem=False):
+        self.mem = mem
 
-        self.base_path = Path(data_dir)
-        self.base_path.mkdir(exist_ok=True)
+        self.cursos = {}
+        self.alunos = {}
+        self.turmas = {}
+        self.matriculas = {}
 
-        self._f_cursos = "cursos.json"
-        self._f_alunos = "alunos.json"
-        self._f_turmas = "turmas.json"
-        self._f_matriculas = "matriculas.json"
+        if not self.mem:
+            self.base_path = Path(data_dir)
+            self.base_path.mkdir(exist_ok=True)
 
-        # disco
-        self.load_all()
+            self._f_cursos = "cursos.json"
+            self._f_alunos = "alunos.json"
+            self._f_turmas = "turmas.json"
+            self._f_matriculas = "matriculas.json"
 
-    def _write(self, filename: str, data):
-        path = self.base_path / filename
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            self.load_all()
 
-    def _read(self, filename: str):
-        path = self.base_path / filename
-        if not path.exists():
-            return {}
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+def _write(self, filename, data):
+    if self.mem:
+        return
+    path = self.base_path / filename
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def _read(self, filename):
+    if self.mem:
+        return {}
+    path = self.base_path / filename
+    if not path.exists():
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+    # def _write(self, filename: str, data):
+    #     path = self.base_path / filename
+    #     with open(path, "w", encoding="utf-8") as f:
+    #         json.dump(data, f, ensure_ascii=False, indent=2)
+
+    # def _read(self, filename: str):
+    #     path = self.base_path / filename
+    #     if not path.exists():
+    #         return {}
+    #     with open(path, "r", encoding="utf-8") as f:
+    #         return json.load(f)
 
    # serialização
     def _serialize_aluno(self, aluno_obj):
@@ -178,7 +196,13 @@ class Repository:
 
     def add_curso(self, codigo: str, nome: str, carga_horaria: int, prerequisitos=None, ementa=None):
         from src.models.curso import Curso
-        c = Curso(codigo=codigo, nome=nome, carga_horaria=carga_horaria, prerequisitos=prerequisitos, ementa=ementa)
+        c = Curso(
+            codigo=codigo,
+            nome=nome,
+            carga_horaria=carga_horaria,
+            prerequisitos=prerequisitos,
+            ementa=ementa
+        )
         self.cursos[codigo] = c
         self.save_all()
         return c
@@ -208,7 +232,7 @@ class Repository:
     def get_turma(self, id_turma: str):
         return self.turmas.get(str(id_turma))
 
-    def adicionar_matricula(self, matricula_obj):
+    def add_matricula(self, matricula_obj):
         # chave unica aluno_id
         aluno_id = getattr(matricula_obj.aluno, "matricula", matricula_obj.aluno)
         turma_id = getattr(matricula_obj.turma, "id_turma", matricula_obj.turma)
@@ -226,25 +250,25 @@ class Repository:
         chave = f"{aluno_id}_{turma_id}"
         return self.matriculas.get(chave)
 
-    def save_all(self):
-        # wrapper (corrigir/revisar)
-        self.save_alunos()
-        self.save_cursos()
-        self.save_turmas()
-        self.save_matriculas()
+    # def save_all(self):
+    #     # wrapper (corrigir/revisar)
+    #     self.save_alunos()
+    #     self.save_cursos()
+    #     self.save_turmas()
+    #     self.save_matriculas()
 
-    def save_alunos(self):
-        alunos_serial = {mat: self._serialize_aluno(obj) for mat, obj in self.alunos.items()}
-        self._write(self._f_alunos, alunos_serial)
+    # def save_alunos(self):
+    #     alunos_serial = {mat: self._serialize_aluno(obj) for mat, obj in self.alunos.items()}
+    #     self._write(self._f_alunos, alunos_serial)
 
-    def save_cursos(self):
-        cursos_serial = {codigo: self._serialize_curso(obj) for codigo, obj in self.cursos.items()}
-        self._write(self._f_cursos, cursos_serial)
+    # def save_cursos(self):
+    #     cursos_serial = {codigo: self._serialize_curso(obj) for codigo, obj in self.cursos.items()}
+    #     self._write(self._f_cursos, cursos_serial)
 
-    def save_turmas(self):
-        turmas_serial = {tid: self._serialize_turma(obj) for tid, obj in self.turmas.items()}
-        self._write(self._f_turmas, turmas_serial)
+    # def save_turmas(self):
+    #     turmas_serial = {tid: self._serialize_turma(obj) for tid, obj in self.turmas.items()}
+    #     self._write(self._f_turmas, turmas_serial)
 
-    def save_matriculas(self):
-        matriculas_serial = {chave: self._serialize_matricula(chave, m) for chave, m in self.matriculas.items()}
-        self._write(self._f_matriculas, matriculas_serial)
+    # def save_matriculas(self):
+    #     matriculas_serial = {chave: self._serialize_matricula(chave, m) for chave, m in self.matriculas.items()}
+    #     self._write(self._f_matriculas, matriculas_serial)

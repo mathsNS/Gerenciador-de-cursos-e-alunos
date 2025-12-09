@@ -1,4 +1,5 @@
 import pytest
+from src.models.curso import Curso
 from src.models.aluno import Aluno
 from src.models.turma import Turma
 from src.models.matricula import Matricula

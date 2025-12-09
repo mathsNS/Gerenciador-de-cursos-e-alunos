@@ -1,5 +1,6 @@
 import pytest
 from src.models.curso import Curso
+from src.core.repository import Repository
 
 def test_criacao_curso_basico():
     c = Curso(codigo="MAT101", nome="Cálculo I", carga_horaria=60)

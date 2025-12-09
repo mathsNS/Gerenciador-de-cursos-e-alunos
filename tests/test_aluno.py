@@ -1,5 +1,6 @@
 import pytest 
 from src.models.aluno import Aluno
+from src.core.repository import Repository
 
 def test_criacao_aluno():
     a = Aluno(matricula="2025001", nome="João", email="j@ex.com")

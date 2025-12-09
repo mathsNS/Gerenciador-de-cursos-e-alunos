@@ -17,6 +17,7 @@ class Aluno:
         self.matricula = matricula
         self.nome = nome
         self.email = email
+        self.historico = []
         self.cursos_concluidos = [] # lista de dicts: {"curso": "ABC123", "nota": x, "frequencia": y}
 
     def adicionar_historico(self, curso, nota, frequencia):
