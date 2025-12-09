@@ -1,1 +1,26 @@
-[]
+{
+  "T1": {
+    "id_turma": "T1",
+    "codigo_curso": "MAT101",
+    "periodo": "2025.2",
+    "horarios": {
+      "seg": "08:00-10:00"
+    },
+    "vagas": 40,
+    "local": "Bloco A",
+    "matriculas": [],
+    "aberta": true
+  },
+  "T2": {
+    "id_turma": "T2",
+    "codigo_curso": "FIS101",
+    "periodo": "2025.2",
+    "horarios": {
+      "seg": "08:00-10:00"
+    },
+    "vagas": 40,
+    "local": "Bloco B",
+    "matriculas": [],
+    "aberta": true
+  }
+}

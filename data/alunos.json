@@ -1,1 +1,14 @@
-[]
+{
+  "1": {
+    "matricula": "1",
+    "nome": "João",
+    "email": "j@j.com",
+    "cursos_concluidos": []
+  },
+  "2": {
+    "matricula": "2",
+    "nome": "Maria",
+    "email": "m@m.com",
+    "cursos_concluidos": []
+  }
+}

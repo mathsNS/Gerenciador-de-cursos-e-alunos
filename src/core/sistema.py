@@ -1,7 +1,102 @@
+import json
 from src.core.repository import Repository
 from src.models.matricula import Matricula
+from datetime import datetime
+from pathlib import Path
+from src.models.matricula import Matricula, EstadoMatricula
 
+SETTINGS_PATH = Path.cwd() / "settings.json"
 
+def _load_settings():
+    defaults = {
+        "nota_minima_aprovacao": 6.0,
+        "frequencia_minima": 75.0,
+        "data_limite_trancamento": None,
+        "max_turmas_por_aluno": None,
+        "top_n_alunos": 10
+    }
+    if not SETTINGS_PATH.exists():
+        return defaults
+    try:
+        with open(SETTINGS_PATH, "r", encoding="utf-8") as f:
+            s = json.load(f)
+        defaults.update(s or {})
+    except Exception:
+        pass
+    return defaults
+
+# dentro da classe Sistema:
+class Sistema:
+    def __init__(self):
+        self.cursos = {}
+        self.alunos = {}
+        self.turmas = {}
+        self.matriculas = []
+        self.settings = _load_settings()
+
+    # encontra objeto Matricula por aluno+turma
+    def _find_matricula(self, aluno_matricula, turma_id):
+        for m in self.matriculas:
+            if m.aluno_matricula == aluno_matricula and m.turma_id == turma_id:
+                return m
+        return None
+
+    # Lançar nota (valida intervalo e atualiza)
+    def lancar_nota(self, aluno_matricula: str, turma_id: str, nota: float):
+        if nota is None:
+            return False, "Nota não informada"
+        if nota < 0 or nota > 10:
+            return False, "Nota inválida (0-10)"
+        m = self._find_matricula(aluno_matricula, turma_id)
+        if not m:
+            return False, "Matrícula não encontrada"
+        m.nota = nota
+        nota_min = float(self.settings.get("nota_minima_aprovacao", 6.0))
+        freq_min = float(self.settings.get("frequencia_minima", 75.0))
+        novo_estado = m.calcular_situacao(nota_min, freq_min)
+        m.estado = novo_estado
+        return True, f"Nota lançada. Situação: {m.estado.value}"
+
+    # Lançar frequência (valida intervalo e atualiza)
+    def lancar_frequencia(self, aluno_matricula: str, turma_id: str, frequencia: float):
+        if frequencia is None:
+            return False, "Frequência não informada"
+        if frequencia < 0 or frequencia > 100:
+            return False, "Frequência inválida (0-100)"
+        m = self._find_matricula(aluno_matricula, turma_id)
+        if not m:
+            return False, "Matrícula não encontrada"
+        m.frequencia = frequencia
+        nota_min = float(self.settings.get("nota_minima_aprovacao", 6.0))
+        freq_min = float(self.settings.get("frequencia_minima", 75.0))
+        novo_estado = m.calcular_situacao(nota_min, freq_min)
+        m.estado = novo_estado
+        return True, f"Frequência lançada. Situação: {m.estado.value}"
+
+    # Trancar matrícula até data limite
+    def trancar_matricula(self, aluno_matricula: str, turma_id: str, referencia_data: datetime = None):
+        m = self._find_matricula(aluno_matricula, turma_id)
+        if not m:
+            return False, "Matrícula não encontrada"
+
+        data_lim_str = self.settings.get("data_limite_trancamento")
+        if not data_lim_str:
+            return False, "Trancamento não permitido (data limite não configurada)"
+        try:
+            data_lim = datetime.strptime(data_lim_str, "%Y-%m-%d").date()
+        except Exception:
+            return False, "Configuração de data_limite_trancamento inválida"
+
+        hoje = (referencia_data or datetime.now()).date()
+        if hoje > data_lim:
+            return False, f"Prazo de trancamento expirado ({data_lim.isoformat()})"
+
+        m.estado = EstadoMatricula.TRANCADO
+        # se tiver atributo ativa, marca inativa
+        if hasattr(m, "ativa"):
+            m.ativa = False
+        return True, "Matrícula trancada com sucesso"
+    
 class SistemaAcademico:
     def __init__(self):
         self.repo = Repository()

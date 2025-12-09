@@ -1,1 +1,18 @@
-[]
+{
+  "MAT101": {
+    "codigo": "MAT101",
+    "nome": "Cálculo I",
+    "carga_horaria": 60,
+    "prerequisitos": [],
+    "ementa": null
+  },
+  "FIS101": {
+    "codigo": "FIS101",
+    "nome": "Física I",
+    "carga_horaria": 60,
+    "prerequisitos": [
+      "MAT101"
+    ],
+    "ementa": null
+  }
+}

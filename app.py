@@ -1,11 +1,44 @@
 from flask import Flask, jsonify, request
 from src.core.repository import Repository
 from src.core.reports import Reports
+from src.core.sistema import Sistema
 
 app = Flask(__name__)
-
+sistema = Sistema()
 repo = Repository()
 reports = Reports(repo)
+
+# lançar nota
+@app.route("/matricula/lancar-nota", methods=["POST"])
+def api_lancar_nota():
+    data = request.json or {}
+    aluno = data.get("aluno")
+    turma = data.get("turma")
+    nota = data.get("nota")
+    ok, msg = sistema.lancar_nota(aluno, turma, nota)
+    status = 200 if ok else 400
+    return jsonify({"ok": ok, "mensagem": msg}), status
+
+# lançar frequencia
+@app.route("/matricula/lancar-frequencia", methods=["POST"])
+def api_lancar_frequencia():
+    data = request.json or {}
+    aluno = data.get("aluno")
+    turma = data.get("turma")
+    frequencia = data.get("frequencia")
+    ok, msg = sistema.lancar_frequencia(aluno, turma, frequencia)
+    status = 200 if ok else 400
+    return jsonify({"ok": ok, "mensagem": msg}), status
+
+# trancar matricula
+@app.route("/matricula/trancar", methods=["POST"])
+def api_trancar():
+    data = request.json or {}
+    aluno = data.get("aluno")
+    turma = data.get("turma")
+    ok, msg = sistema.trancar_matricula(aluno, turma)
+    status = 200 if ok else 400
+    return jsonify({"ok": ok, "mensagem": msg}), status
 
 @app.route("/")
 def index():
