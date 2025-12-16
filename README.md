@@ -1,6 +1,6 @@
 
 # **Gerenciador de Cursos e Alunos**
-![Status](https://img.shields.io/badge/Projeto-Semana%204-purple)
+![Status](https://img.shields.io/badge/Projeto-Semana%205-purple)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue)
 
 ## **Descrição do Projeto**
@@ -182,6 +182,7 @@ uvicorn main:app --reload
 ```
 
 O comando abaixo inicia a aplicação e disponibiliza a documentação automática em /docs (Swagger UI) e /redoc:
+A interface para navegação pode ser acessada em /ui
 
 ---
 
