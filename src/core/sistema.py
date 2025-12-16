@@ -184,3 +184,155 @@ class SistemaAcademico:
         return True, "Matrícula realizada com sucesso."
 
     #relatorio
+    
+    def relatorio_alunos_por_turma(self):
+        """Lista alunos por turma com vagas ocupadas vs totais."""
+        resultado = []
+        for turma_id, turma in self.repo.turmas.items():
+            if isinstance(turma, dict):
+                continue
+            alunos = []
+            for m in getattr(turma, "matriculas", []):
+                aluno = self.repo.alunos.get(str(getattr(m, "aluno", m)))
+                if aluno:
+                    alunos.append({
+                        "matricula": aluno.matricula,
+                        "nome": aluno.nome
+                    })
+            resultado.append({
+                "turma": turma_id,
+                "curso": turma.codigo_curso,
+                "ocupadas": len(alunos),
+                "vagas": turma.vagas,
+                "alunos": alunos
+            })
+        return resultado
+    
+    def relatorio_taxa_aprovacao(self):
+        """Taxa de aprovação por curso e por turma."""
+        import statistics
+        nota_min = float(self.repo.cursos.get("nota_min", 6.0)) if isinstance(self.repo.cursos.get("nota_min"), (int, float)) else 6.0
+        freq_min = 75.0
+        
+        # por turma
+        por_turma = {}
+        for turma_id, turma in self.repo.turmas.items():
+            if isinstance(turma, dict):
+                continue
+            notas = []
+            freqs = []
+            for m in getattr(turma, "matriculas", []):
+                if not isinstance(m, dict):
+                    n = getattr(m, "nota", None)
+                    f = getattr(m, "frequencia", None)
+                    if n is not None and f is not None:
+                        notas.append(n)
+                        freqs.append(f)
+            
+            aprovados = sum(1 for n, f in zip(notas, freqs) if n >= nota_min and f >= freq_min)
+            total = len(notas)
+            taxa = (aprovados / total * 100) if total > 0 else 0
+            
+            por_turma[turma_id] = {
+                "turma": turma_id,
+                "curso": turma.codigo_curso,
+                "aprovados": aprovados,
+                "total": total,
+                "taxa": round(taxa, 2)
+            }
+        
+        # por curso
+        por_curso = {}
+        for turma_id, info in por_turma.items():
+            curso = info["curso"]
+            if curso not in por_curso:
+                por_curso[curso] = {"aprovados": 0, "total": 0}
+            por_curso[curso]["aprovados"] += info["aprovados"]
+            por_curso[curso]["total"] += info["total"]
+        
+        for curso, info in por_curso.items():
+            taxa = (info["aprovados"] / info["total"] * 100) if info["total"] > 0 else 0
+            por_curso[curso]["taxa"] = round(taxa, 2)
+        
+        return {"por_turma": list(por_turma.values()), "por_curso": [{"curso": k, **v} for k, v in por_curso.items()]}
+    
+    def relatorio_distribuicao_notas(self):
+        """Distribuição de notas por turma (média, mediana, desvio padrão)."""
+        import statistics
+        resultado = []
+        
+        for turma_id, turma in self.repo.turmas.items():
+            if isinstance(turma, dict):
+                continue
+            notas = []
+            for m in getattr(turma, "matriculas", []):
+                if not isinstance(m, dict):
+                    n = getattr(m, "nota", None)
+                    if n is not None:
+                        notas.append(n)
+            
+            if notas:
+                media = statistics.mean(notas)
+                mediana = statistics.median(notas)
+                desvio = statistics.stdev(notas) if len(notas) > 1 else 0
+                resultado.append({
+                    "turma": turma_id,
+                    "curso": turma.codigo_curso,
+                    "media": round(media, 2),
+                    "mediana": round(mediana, 2),
+                    "desvio_padrao": round(desvio, 2),
+                    "quantidade": len(notas)
+                })
+        
+        return resultado
+    
+    def relatorio_alunos_risco(self):
+        """Alunos com notq parcial < corte ou frequência < mínimo."""
+        nota_min = 6.0
+        freq_min = 75.0
+        resultado = []
+        
+        for turma_id, turma in self.repo.turmas.items():
+            if isinstance(turma, dict):
+                continue
+            for m in getattr(turma, "matriculas", []):
+                if not isinstance(m, dict):
+                    nota = getattr(m, "nota", None)
+                    freq = getattr(m, "frequencia", None)
+                    aluno_id = getattr(m, "aluno", m)
+                    
+                    # Aluno em risco se nota < min OU freq < min
+                    if (nota is not None and nota < nota_min) or (freq is not None and freq < freq_min):
+                        aluno = self.repo.alunos.get(str(aluno_id))
+                        resultado.append({
+                            "aluno": aluno.nome if aluno else str(aluno_id),
+                            "matricula": aluno.matricula if aluno else str(aluno_id),
+                            "turma": turma_id,
+                            "curso": turma.codigo_curso,
+                            "nota": nota,
+                            "frequencia": freq,
+                            "motivo": "Nota baixa" if nota and nota < nota_min else "Frequência baixa"
+                        })
+        
+        return resultado
+    
+    def relatorio_top_alunos_cr(self, top_n=10):
+        """Top N alunos por coeficiente"""
+        alunos_com_cr = []
+        
+        for mat, aluno in self.repo.alunos.items():
+            if isinstance(aluno, dict):
+                continue
+            historico = getattr(aluno, "historico", [])
+            if historico:
+                cr = aluno.cr  # prop da classe Aluno
+                alunos_com_cr.append({
+                    "matricula": aluno.matricula,
+                    "nome": aluno.nome,
+                    "cr": round(cr, 2),
+                    "cursos_concluidos": len(historico)
+                })
+        
+        # em ordem crescente
+        alunos_com_cr.sort(key=lambda x: x["cr"], reverse=True)
+        return alunos_com_cr[:top_n]

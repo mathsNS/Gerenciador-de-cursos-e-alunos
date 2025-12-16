@@ -78,15 +78,21 @@ def listar_cursos(request: Request):
 
 @router.get("/relatorios", response_class=HTMLResponse)
 def relatorios(request: Request):
-    # gerar relatorio alunos por turma
-    turmas = list(sistema.repo.turmas.keys())
-    rels = []
-    for t in turmas:
-        dados = sistema.alunos_por_turma(t)
-        if dados:
-            rels.append(dados)
+    # gera os relatorios
+    rel_turmas = sistema.relatorio_alunos_por_turma()
+    rel_taxa = sistema.relatorio_taxa_aprovacao()
+    rel_notas = sistema.relatorio_distribuicao_notas()
+    rel_risco = sistema.relatorio_alunos_risco()
+    rel_top = sistema.relatorio_top_alunos_cr(top_n=10)
 
-    return templates.TemplateResponse("relatorios.html", {"request": request, "relatorios": rels})
+    return templates.TemplateResponse("relatorios.html", {
+        "request": request, 
+        "rel_turmas": rel_turmas,
+        "rel_taxa": rel_taxa,
+        "rel_notas": rel_notas,
+        "rel_risco": rel_risco,
+        "rel_top": rel_top
+    })
 
 
 @router.post("/lancar_nota")
