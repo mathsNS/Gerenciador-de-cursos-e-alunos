@@ -287,7 +287,7 @@ class SistemaAcademico:
         return resultado
     
     def relatorio_alunos_risco(self):
-        """Alunos com notq parcial < corte ou frequência < mínimo."""
+        """Alunos com nota parcial < corte ou frequência < mínimo."""
         nota_min = 6.0
         freq_min = 75.0
         resultado = []
@@ -299,14 +299,17 @@ class SistemaAcademico:
                 if not isinstance(m, dict):
                     nota = getattr(m, "nota", None)
                     freq = getattr(m, "frequencia", None)
-                    aluno_id = getattr(m, "aluno", m)
+                    
+                    # Extrai o ID do aluno (pode ser string ou objeto)
+                    aluno_ref = getattr(m, "aluno", None)
+                    aluno_id = getattr(aluno_ref, "matricula", aluno_ref) if hasattr(aluno_ref, "matricula") else aluno_ref
                     
                     # Aluno em risco se nota < min OU freq < min
                     if (nota is not None and nota < nota_min) or (freq is not None and freq < freq_min):
                         aluno = self.repo.alunos.get(str(aluno_id))
                         resultado.append({
-                            "aluno": aluno.nome if aluno else str(aluno_id),
-                            "matricula": aluno.matricula if aluno else str(aluno_id),
+                            "aluno": aluno.nome if aluno and hasattr(aluno, "nome") else str(aluno_id),
+                            "matricula": aluno.matricula if aluno and hasattr(aluno, "matricula") else str(aluno_id),
                             "turma": turma_id,
                             "curso": turma.codigo_curso,
                             "nota": nota,
