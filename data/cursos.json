@@ -14,5 +14,26 @@
       "MAT101"
     ],
     "ementa": null
+  },
+  "ENG101": {
+    "codigo": "ENG101",
+    "nome": "Engenharia I",
+    "carga_horaria": 60,
+    "prerequisitos": [],
+    "ementa": null
+  },
+  "ART101": {
+    "codigo": "ART101",
+    "nome": "Arte I",
+    "carga_horaria": 60,
+    "prerequisitos": [],
+    "ementa": null
+  },
+  "HIS101": {
+    "codigo": "HIS101",
+    "nome": "Historia I",
+    "carga_horaria": 60,
+    "prerequisitos": [],
+    "ementa": null
   }
 }

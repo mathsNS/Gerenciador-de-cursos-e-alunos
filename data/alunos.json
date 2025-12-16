@@ -15,6 +15,30 @@
     "matricula": "3",
     "nome": "Pedro",
     "email": "Pedro@ex.com",
-    "historico": "MAT101"
+    "historico": []
+  },
+  "301": {
+    "matricula": "301",
+    "nome": "Thiago",
+    "email": "thiago@email.com",
+    "historico": []
+  },
+  "302": {
+    "matricula": "302",
+    "nome": "Beatriz",
+    "email": "beatriz@email.com",
+    "historico": []
+  },
+  "303": {
+    "matricula": "303",
+    "nome": "Diego",
+    "email": "diego@email.com",
+    "historico": []
+  },
+  "304": {
+    "matricula": "304",
+    "nome": "Elena",
+    "email": "elena@email.com",
+    "historico": []
   }
 }

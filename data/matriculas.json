@@ -25,5 +25,41 @@
     "frequencia": 68.0,
     "estado": "CURSANDO",
     "ativa": true
+  },
+  "301_T6": {
+    "chave": "301_T6",
+    "aluno": "301",
+    "turma": "T6",
+    "nota": null,
+    "frequencia": null,
+    "estado": "CURSANDO",
+    "ativa": true
+  },
+  "302_T7": {
+    "chave": "302_T7",
+    "aluno": "302",
+    "turma": "T7",
+    "nota": 7.0,
+    "frequencia": 80.0,
+    "estado": "CURSANDO",
+    "ativa": true
+  },
+  "303_T8": {
+    "chave": "303_T8",
+    "aluno": "303",
+    "turma": "T8",
+    "nota": 8.0,
+    "frequencia": null,
+    "estado": "CURSANDO",
+    "ativa": true
+  },
+  "304_T8": {
+    "chave": "304_T8",
+    "aluno": "304",
+    "turma": "T8",
+    "nota": 6.0,
+    "frequencia": null,
+    "estado": "CURSANDO",
+    "ativa": true
   }
 }

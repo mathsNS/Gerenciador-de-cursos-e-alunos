@@ -20,5 +20,32 @@
     "vagas": 40,
     "local": "Bloco B",
     "aberta": true
+  },
+  "T6": {
+    "id_turma": "T6",
+    "codigo_curso": "ENG101",
+    "periodo": "2025.1",
+    "horarios": {},
+    "vagas": 30,
+    "local": null,
+    "aberta": true
+  },
+  "T7": {
+    "id_turma": "T7",
+    "codigo_curso": "ART101",
+    "periodo": "2025.1",
+    "horarios": {},
+    "vagas": 20,
+    "local": null,
+    "aberta": true
+  },
+  "T8": {
+    "id_turma": "T8",
+    "codigo_curso": "HIS101",
+    "periodo": "2025.1",
+    "horarios": {},
+    "vagas": 40,
+    "local": null,
+    "aberta": true
   }
 }
