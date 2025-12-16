@@ -3,6 +3,12 @@
 <div class="card">
   <div class="card-body">
     <h2 class="card-title">Alunos</h2>
+    <form method="post" action="/ui/alunos/novo" class="row g-2 mb-3">
+      <div class="col-auto"><input name="matricula" class="form-control" placeholder="Matrícula" required></div>
+      <div class="col-auto"><input name="nome" class="form-control" placeholder="Nome" required></div>
+      <div class="col-auto"><input name="email" class="form-control" placeholder="Email"></div>
+      <div class="col-auto"><button class="btn btn-primary">Adicionar</button></div>
+    </form>
     <table class="table table-striped">
       <thead><tr><th>Matrícula</th><th>Nome</th><th>Email</th><th></th></tr></thead>
       <tbody>

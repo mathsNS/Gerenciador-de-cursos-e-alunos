@@ -3,6 +3,12 @@
 <div class="card">
   <div class="card-body">
     <h2 class="card-title">Cursos</h2>
+    <form method="post" action="/ui/cursos/novo" class="row g-2 mb-3">
+      <div class="col-auto"><input name="codigo" class="form-control" placeholder="Código" required></div>
+      <div class="col-auto"><input name="nome" class="form-control" placeholder="Nome" required></div>
+      <div class="col-auto"><input name="carga_horaria" type="number" min="1" class="form-control" placeholder="Carga (h)" required></div>
+      <div class="col-auto"><button class="btn btn-primary">Adicionar</button></div>
+    </form>
     <table class="table">
       <thead><tr><th>Código</th><th>Nome</th><th>Carga (h)</th></tr></thead>
       <tbody>

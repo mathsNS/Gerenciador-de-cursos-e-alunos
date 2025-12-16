@@ -119,3 +119,21 @@ def ui_lancar_frequencia(matricula: str = Form(...), turma: str = Form(...), fre
 def ui_concluir_matricula(matricula: str = Form(...), turma: str = Form(...)):
     ok, msg = sistema.concluir_matricula(matricula, turma)
     return RedirectResponse(url=f"/ui/alunos/{matricula}", status_code=303)
+
+
+@router.post("/alunos/novo")
+def ui_add_aluno(matricula: str = Form(...), nome: str = Form(...), email: str = Form(None)):
+    try:
+        sistema.repo.add_aluno(matricula=matricula, nome=nome, email=email)
+    except Exception:
+        pass
+    return RedirectResponse(url="/ui/alunos", status_code=303)
+
+
+@router.post("/cursos/novo")
+def ui_add_curso(codigo: str = Form(...), nome: str = Form(...), carga_horaria: int = Form(...)):
+    try:
+        sistema.repo.add_curso(codigo=codigo, nome=nome, carga_horaria=int(carga_horaria))
+    except Exception:
+        pass
+    return RedirectResponse(url="/ui/cursos", status_code=303)

@@ -4,7 +4,7 @@
     "aluno": "1",
     "turma": "T1",
     "nota": 10.0,
-    "frequencia": null,
+    "frequencia": 70.0,
     "estado": "CURSANDO",
     "ativa": true
   },
