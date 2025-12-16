@@ -1,9 +1,12 @@
 import json
 from pathlib import Path
+from src.models.turma import Turma
+from src.models.horario import Horario
+
 from typing import Dict, Any
 
 class Repository:
-    def __init__(self, data_dir="data", mem=False):
+    def __init__(self, data_dir="data", mem=True):
         self.mem = mem
 
         self.cursos = {}
@@ -11,32 +14,31 @@ class Repository:
         self.turmas = {}
         self.matriculas = {}
 
+        self._f_cursos = "cursos.json"
+        self._f_alunos = "alunos.json"
+        self._f_turmas = "turmas.json"
+        self._f_matriculas = "matriculas.json"
+
         if not self.mem:
             self.base_path = Path(data_dir)
             self.base_path.mkdir(exist_ok=True)
-
-            self._f_cursos = "cursos.json"
-            self._f_alunos = "alunos.json"
-            self._f_turmas = "turmas.json"
-            self._f_matriculas = "matriculas.json"
-
             self.load_all()
 
-def _write(self, filename, data):
-    if self.mem:
-        return
-    path = self.base_path / filename
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    def _write(self, filename, data):
+        if self.mem:
+            return
+        path = self.base_path / filename
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
 
-def _read(self, filename):
-    if self.mem:
-        return {}
-    path = self.base_path / filename
-    if not path.exists():
-        return {}
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    def _read(self, filename):
+        if self.mem:
+            return {}
+        path = self.base_path / filename
+        if not path.exists():
+            return {}
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
 
     # def _write(self, filename: str, data):
     #     path = self.base_path / filename
@@ -169,6 +171,7 @@ def _read(self, filename):
 
         # precisa ligar a alunos/turma
         self.matriculas = {}
+        self.matriculas = {}
         for chave, m in (dados_matriculas or {}).items():
             try:
                 aluno_id = m.get("aluno")
@@ -222,27 +225,69 @@ def _read(self, filename):
     def get_aluno(self, matricula: str):
         return self.alunos.get(str(matricula))
 
-    def add_turma(self, id_turma: str, codigo_curso: str, periodo: str, horarios: dict, vagas: int, local: str = None):
-        from src.models.turma import Turma
-        t = Turma(id_turma=id_turma, codigo_curso=codigo_curso, periodo=periodo, horarios=horarios, vagas=vagas, local=local)
-        self.turmas[str(id_turma)] = t
+    def add_turma(self, id_turma, codigo_curso, periodo, horarios: dict, vagas: int):
+        if id_turma in self.turmas:
+            raise ValueError("Turma já existe")
+
+        horarios_obj = {dia: Horario(tempo) for dia, tempo in horarios.items()}
+        turma = Turma(
+            id_turma=id_turma,
+            codigo_curso=codigo_curso,
+            periodo=periodo,
+            horarios=horarios_obj,
+            vagas=vagas
+        )
+
+        self.turmas[id_turma] = turma
         self.save_all()
-        return t
+        return turma
 
     def get_turma(self, id_turma: str):
         return self.turmas.get(str(id_turma))
 
-    def add_matricula(self, matricula_obj):
-        # chave unica aluno_id
-        aluno_id = getattr(matricula_obj.aluno, "matricula", matricula_obj.aluno)
-        turma_id = getattr(matricula_obj.turma, "id_turma", matricula_obj.turma)
+    def add_matricula(self, aluno_id: str, turma_id: str):
+        # valida existência
+        if aluno_id not in self.alunos:
+            raise ValueError("Aluno inexistente")
+        if turma_id not in self.turmas:
+            raise ValueError("Turma inexistente")
+
+        aluno = self.alunos[aluno_id]
+        turma = self.turmas[turma_id]
+
+        # 1) verifica pré-requisitos
+        curso = self.cursos[turma.codigo_curso]
+        for pre in curso.prerequisitos:
+            if pre not in aluno.historico:
+                raise ValueError("Aluno não cumpriu pré-requisitos")
+
+        # 2) verifica choque de horário
+        if hasattr(aluno, "matriculas"):
+            for outra in aluno.matriculas:
+                for h1 in turma.horarios.values():  # percorre os horários da turma que vai matricular
+                    for h2 in outra.turma.horarios.values():  # percorre horários das turmas já matriculadas
+                        if h1.choca_com(h2):
+                            raise ValueError("Choque de horário")
+        else:
+            aluno.matriculas = []
+
+        # 3) verifica vagas
+        if hasattr(turma, "matriculas"):
+            if len(turma.matriculas) >= turma.vagas:
+                raise ValueError("Turma lotada")
+        else:
+            turma.matriculas = []
+
+        # cria a matrícula
+        from src.models.matricula import Matricula  # importe a classe Matricula
+        matricula_obj = Matricula(aluno, turma)
+
+        # adiciona na lista do repositório e do aluno/turma
         chave = f"{aluno_id}_{turma_id}"
         self.matriculas[chave] = matricula_obj
+        aluno.matriculas.append(matricula_obj)
+        turma.matriculas.append(matricula_obj)
 
-        # adiciona na turma se existe
-        turma = self.turmas.get(str(turma_id))
-        if turma and hasattr(turma, "matriculas"):
-            turma.matriculas.append(matricula_obj)
         self.save_all()
         return matricula_obj
 
@@ -250,6 +295,18 @@ def _read(self, filename):
         chave = f"{aluno_id}_{turma_id}"
         return self.matriculas.get(chave)
 
+    def alunos_por_turma(self, id_turma):
+        if id_turma not in self.turmas:
+            raise ValueError("Turma inexistente")
+
+        turma = self.turmas[id_turma]
+        alunos = [mat.aluno.matricula for mat in turma.matriculas] 
+
+        return {
+            "turma": id_turma,
+            "total": len(alunos),
+            "alunos": alunos
+        }
     # def save_all(self):
     #     # wrapper (corrigir/revisar)
     #     self.save_alunos()
