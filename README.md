@@ -92,36 +92,75 @@ Persistência (JSON ou SQLite)
 ## **Organização das Pastas**
 
 ```
-projeto_academico/
+gerenciador-poo/
 ├── README.md
+├── LICENSE
+├── requirements.txt
 ├── settings.json
+├── main.py (entry point FastAPI)
+├── seed.py (popular dados iniciais)
 │
-├── models/
+├── src/
 │   ├── __init__.py
-│   ├── pessoa.py
-│   ├── aluno.py
-│   ├── curso.py
-│   ├── oferta.py
-│   ├── turma.py
-│   └── matricula.py
-│
-├── services/
-│   ├── __init__.py
-│   ├── cadastro_service.py
-│   └── matricula_service.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── pessoa.py
+│   │   ├── aluno.py
+│   │   ├── curso.py
+│   │   ├── horario.py
+│   │   ├── oferta.py
+│   │   ├── turma.py
+│   │   └── matricula.py
+│   │
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── container.py (singleton SistemaAcademico)
+│   │   ├── repository.py (CRUD + persistência JSON)
+│   │   ├── sistema.py (lógica de negócio + relatórios)
+│   │   ├── dados.py
+│   │   ├── db.py
+│   │   ├── models.py
+│   │   ├── reports.py
+│   │   ├── scheduler.py
+│   │   └── validators.py
+│   │
+│   └── api/
+│       ├── __init__.py
+│       ├── ui.py (rotas HTML + formulários)
+│       ├── alunos.py (endpoints JSON)
+│       ├── turmas.py
+│       ├── matriculas.py
+│       ├── relatorios.py
+│       └── health.py
 │
 ├── data/
-│   ├── __init__.py
-│   ├── dados.py
-│   └── seed.py
+│   ├── alunos.json
+│   ├── cursos.json
+│   ├── turmas.json
+│   └── matriculas.json
 │
-├── cli/
-│   ├── __init__.py
-│   └── main.py
+├── templates/
+│   ├── base.html (layout base com navbar)
+│   ├── index.html
+│   ├── alunos.html (lista + form criar aluno)
+│   ├── aluno_profile.html (perfil, histórico, matrículas, formulários)
+│   ├── turmas.html (lista turmas)
+│   ├── cursos.html (lista + form criar curso)
+│   └── relatorios.html (5 relatórios consolidados)
+│
+├── static/
+│   └── style.css
 │
 └── tests/
     ├── __init__.py
-    └── test_matricula.py
+    ├── test_aluno.py
+    ├── test_curso.py
+    ├── test_turma.py
+    ├── test_matricula.py
+    ├── test_horario.py
+    ├── test_cr.py
+    ├── test_sistema_completo.py
+    └── __pycache__/
 ```
 
 ---

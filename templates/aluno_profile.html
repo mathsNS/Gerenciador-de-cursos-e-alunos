@@ -55,6 +55,27 @@
     {% endif %}
 
     <div class="row mt-4">
+      <div class="col-12 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title">Matricular em nova turma</h6>
+            <form method="post" action="/ui/matricular" class="row g-2 align-items-end">
+              <input type="hidden" name="matricula" value="{{ aluno.matricula }}">
+              <div class="col-md-6">
+                <label class="form-label">Turma</label>
+                <select name="turma" class="form-select form-select-sm">
+                  {% for t in turmas %}
+                    <option value="{{ t.id_turma }}">{{ t.id_turma }} — {{ t.codigo_curso }} (vagas: {{ t.vagas }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-sm">Matricular</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">

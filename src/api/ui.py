@@ -40,7 +40,20 @@ def perfil_aluno(request: Request, matricula: str):
     # monta histórico e matrículas
     matriculas_raw = [m for m in sistema.repo.matriculas.values() if getattr(m, "aluno", None) and getattr(getattr(m, 'aluno'), "matricula", m.aluno) == str(matricula)]
 
-    return templates.TemplateResponse("aluno_profile.html", {"request": request, "aluno": aluno, "matriculas": matriculas_raw})
+    # monta lista de turmas disponiveis para matricula
+    turmas_raw = list(sistema.repo.turmas.values())
+    turmas = []
+    for t in turmas_raw:
+        if isinstance(t, dict):
+            turmas.append(t)
+        else:
+            turmas.append({
+                "id_turma": getattr(t, "id_turma", None),
+                "codigo_curso": getattr(t, "codigo_curso", None),
+                "vagas": getattr(t, "vagas", None)
+            })
+
+    return templates.TemplateResponse("aluno_profile.html", {"request": request, "aluno": aluno, "matriculas": matriculas_raw, "turmas": turmas})
 
 
 @router.get("/turmas", response_class=HTMLResponse)
@@ -137,3 +150,12 @@ def ui_add_curso(codigo: str = Form(...), nome: str = Form(...), carga_horaria: 
     except Exception:
         pass
     return RedirectResponse(url="/ui/cursos", status_code=303)
+
+
+@router.post("/matricular")
+def ui_matricular(matricula: str = Form(...), turma: str = Form(...)):
+    try:
+        ok, msg = sistema.matricular(matricula, turma)
+    except Exception:
+        ok, msg = False, "Erro ao matricular"
+    return RedirectResponse(url=f"/ui/alunos/{matricula}", status_code=303)
