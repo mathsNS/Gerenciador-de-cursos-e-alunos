@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Cursos</h2>
+    <table class="table">
+      <thead><tr><th>Código</th><th>Nome</th><th>Carga (h)</th></tr></thead>
+      <tbody>
+      {% for c in cursos %}
+        <tr>
+          <td>{{ c.codigo }}</td>
+          <td>{{ c.nome }}</td>
+          <td>{{ c.carga_horaria }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3">Nenhum curso</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

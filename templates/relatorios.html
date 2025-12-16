@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Relatórios</h2>
+    {% if relatorios %}
+      <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead><tr><th>Turma</th><th>Total</th><th>Alunos (matrículas)</th></tr></thead>
+        <tbody>
+        {% for r in relatorios %}
+          <tr>
+            <td>{{ r.turma }}</td>
+            <td>{{ r.total }} / {{ r.vagas if r.vagas is defined else '' }}</td>
+            <td>{{ r.alunos | join(', ') }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    {% else %}
+      <p>Nenhum dado de relatório disponível.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

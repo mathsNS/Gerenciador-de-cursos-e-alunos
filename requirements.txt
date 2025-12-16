@@ -1,3 +1,4 @@
-FastAPI
-Python >=3.11  
-UVicorn
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart

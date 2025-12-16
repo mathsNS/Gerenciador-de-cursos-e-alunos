@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from src.core.container import sistema
+from src.core.repository import Repository
 
 router = APIRouter(prefix="/relatorios", tags=["Relatórios"])
 

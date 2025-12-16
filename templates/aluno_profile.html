@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Perfil: {{ aluno.nome }} <small class="text-muted">({{ aluno.matricula }})</small></h2>
+
+    <h5>Histórico (Cursos Concluídos)</h5>
+    {% if aluno.historico %}
+      <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead><tr><th>Curso</th><th>Nota</th><th>Frequência</th></tr></thead>
+        <tbody>
+        {% for item in aluno.historico %}
+          <tr>
+            <td>{{ item.curso if item.curso is defined else item }}</td>
+            <td>{{ item.nota if item.nota is defined else '-' }}</td>
+            <td>{{ item.frequencia if item.frequencia is defined else '-' }}%</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    {% else %}
+      <p><em>Sem histórico</em></p>
+    {% endif %}
+
+    <h5 class="mt-4">Matrículas Ativas</h5>
+    {% if matriculas %}
+      <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead><tr><th>Turma</th><th>Nota</th><th>Frequência</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+        {% for m in matriculas %}
+          <tr>
+            <td>{{ m.turma.id_turma if m.turma and m.turma.id_turma is defined else (m.turma if m.turma is string else '') }}</td>
+            <td>{{ m.nota or '-' }}</td>
+            <td>{{ m.frequencia or '-' }}%</td>
+            <td>{{ m.estado.value if m.estado else (m.estado if m.estado is string else '-') }}</td>
+            <td>
+              {% if m.nota and m.frequencia %}
+                <form method="post" action="/ui/concluir_matricula" style="display:inline;">
+                  <input type="hidden" name="matricula" value="{{ aluno.matricula }}">
+                  <input type="hidden" name="turma" value="{{ m.turma.id_turma if m.turma and m.turma.id_turma is defined else m.turma }}">
+                  <button class="btn btn-sm btn-success" type="submit">Concluir</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    {% else %}
+      <p><em>Sem matrículas ativas</em></p>
+    {% endif %}
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title">Lançar nota</h6>
+            <form method="post" action="/ui/lancar_nota">
+              <input type="hidden" name="matricula" value="{{ aluno.matricula }}">
+              <div class="mb-2">
+                <label class="form-label">Turma</label>
+                <input class="form-control form-control-sm" name="turma" placeholder="ex: T1">
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Nota</label>
+                <input class="form-control form-control-sm" name="nota" type="number" step="0.1" min="0" max="10" placeholder="0-10">
+              </div>
+              <button class="btn btn-primary btn-sm" type="submit">Enviar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title">Lançar frequência</h6>
+            <form method="post" action="/ui/lancar_frequencia">
+              <input type="hidden" name="matricula" value="{{ aluno.matricula }}">
+              <div class="mb-2">
+                <label class="form-label">Turma</label>
+                <input class="form-control form-control-sm" name="turma" placeholder="ex: T1">
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Frequência (%)</label>
+                <input class="form-control form-control-sm" name="frequencia" type="number" step="0.1" min="0" max="100" placeholder="0-100">
+              </div>
+              <button class="btn btn-secondary btn-sm" type="submit">Enviar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

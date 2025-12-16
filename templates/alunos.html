@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Alunos</h2>
+    <table class="table table-striped">
+      <thead><tr><th>Matrícula</th><th>Nome</th><th>Email</th><th></th></tr></thead>
+      <tbody>
+      {% for a in alunos %}
+        <tr>
+          <td>{{ a.matricula }}</td>
+          <td>{{ a.nome }}</td>
+          <td>{{ a.email }}</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="/ui/alunos/{{ a.matricula }}">Ver</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4">Nenhum aluno cadastrado</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

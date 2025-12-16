@@ -1,1 +1,29 @@
-{}
+{
+  "1_T1": {
+    "chave": "1_T1",
+    "aluno": "1",
+    "turma": "T1",
+    "nota": 10.0,
+    "frequencia": null,
+    "estado": "CURSANDO",
+    "ativa": true
+  },
+  "2_T1": {
+    "chave": "2_T1",
+    "aluno": "2",
+    "turma": "T1",
+    "nota": null,
+    "frequencia": null,
+    "estado": "CURSANDO",
+    "ativa": true
+  },
+  "3_T2": {
+    "chave": "3_T2",
+    "aluno": "3",
+    "turma": "T2",
+    "nota": 10.0,
+    "frequencia": 68.0,
+    "estado": "CURSANDO",
+    "ativa": true
+  }
+}

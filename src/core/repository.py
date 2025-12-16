@@ -6,7 +6,7 @@ from src.models.horario import Horario
 from typing import Dict, Any
 
 class Repository:
-    def __init__(self, data_dir="data", mem=True):
+    def __init__(self, data_dir="data", mem=False):
         self.mem = mem
 
         self.cursos = {}
@@ -58,6 +58,13 @@ class Repository:
         historico = getattr(aluno_obj, "historico", None)
         if historico is None:
             historico = getattr(aluno_obj, "cursos_concluidos", [])
+        
+        # garante que historico é uma lista de dicts
+        if isinstance(historico, str):
+            historico = []
+        elif not isinstance(historico, list):
+            historico = []
+        
         return {
             "matricula": aluno_obj.matricula,
             "nome": aluno_obj.nome,
@@ -145,6 +152,16 @@ class Repository:
             try:
                 aluno = Aluno(matricula=a.get("matricula", mat), nome=a.get("nome"), email=a.get("email"))
                 historico = a.get("historico", a.get("cursos_concluidos", []))
+                
+                # garabnte que historico nao é string
+                if isinstance(historico, str):
+                    historico = []
+                elif not isinstance(historico, list):
+                    historico = []
+                else:
+                    # depois valida
+                    historico = [item if isinstance(item, dict) else {} for item in historico]
+                
                 # mantem os dois atributos
                 setattr(aluno, "historico", historico)
                 setattr(aluno, "cursos_concluidos", historico)
@@ -294,6 +311,96 @@ class Repository:
     def get_matricula(self, aluno_id: str, turma_id: str):
         chave = f"{aluno_id}_{turma_id}"
         return self.matriculas.get(chave)
+
+    def lancar_nota(self, aluno, turma, nota):
+        # normaliza ids recebidos (pode receber objeto ou id string)
+        aluno_id = getattr(aluno, "matricula", aluno)
+        turma_id = getattr(turma, "id_turma", turma)
+
+        for chave, matricula in self.matriculas.items():
+            # caso a matrícula esteja armazenada como dict (serializada)
+            if isinstance(matricula, dict):
+                m_aluno = matricula.get("aluno")
+                m_turma = matricula.get("turma")
+                if str(m_aluno) == str(aluno_id) and str(m_turma) == str(turma_id):
+                    matricula["nota"] = nota
+                    self.save_all()
+                    return True, "Nota lançada com sucesso"
+
+            # caso seja um objeto Matricula
+            else:
+                m_aluno = getattr(matricula.aluno, "matricula", matricula.aluno)
+                m_turma = getattr(matricula.turma, "id_turma", matricula.turma)
+                if str(m_aluno) == str(aluno_id) and str(m_turma) == str(turma_id):
+                    matricula.nota = nota
+                    self.save_all()
+                    return True, "Nota lançada com sucesso"
+
+        return False, "Matrícula não encontrada"
+
+    def lancar_frequencia(self, aluno, turma, frequencia):
+        # normaliza ids recebidos (pode receber objeto ou id string)
+        aluno_id = getattr(aluno, "matricula", aluno)
+        turma_id = getattr(turma, "id_turma", turma)
+
+        for chave, matricula in self.matriculas.items():
+            # caso a matrícula esteja armazenada como dict (serializada)
+            if isinstance(matricula, dict):
+                m_aluno = matricula.get("aluno")
+                m_turma = matricula.get("turma")
+                if str(m_aluno) == str(aluno_id) and str(m_turma) == str(turma_id):
+                    matricula["frequencia"] = frequencia
+                    self.save_all()
+                    return True, "Frequência lançada com sucesso"
+
+            # caso seja um objeto Matricula
+            else:
+                m_aluno = getattr(matricula.aluno, "matricula", matricula.aluno)
+                m_turma = getattr(matricula.turma, "id_turma", matricula.turma)
+                if str(m_aluno) == str(aluno_id) and str(m_turma) == str(turma_id):
+                    matricula.frequencia = frequencia
+                    self.save_all()
+                    return True, "Frequência lançada com sucesso"
+
+        return False, "Matrícula não encontrada"
+
+    def concluir_matricula(self, aluno_id, turma_id):
+        # move a matricula aprovada direto pro historico (para outros pre-requisitos)
+        aluno_obj = self.alunos.get(str(aluno_id))
+        turma_obj = self.turmas.get(str(turma_id))
+        
+        if aluno_obj is None or turma_obj is None:
+            return False, "Aluno ou turma não encontrados"
+        
+        chave = f"{aluno_id}_{turma_id}"
+        matricula = self.matriculas.get(chave)
+        
+        if matricula is None:
+            return False, "Matrícula não encontrada"
+        
+        # dados da matricula
+        if isinstance(matricula, dict):
+            nota = matricula.get("nota")
+            frequencia = matricula.get("frequencia")
+        else:
+            nota = getattr(matricula, "nota", None)
+            frequencia = getattr(matricula, "frequencia", None)
+        
+        if nota is None or frequencia is None:
+            return False, "Nota e frequência devem estar preenchidas"
+        
+        # Adiciona ao historico do aluno
+        aluno_obj.adicionar_historico(
+            curso=turma_obj.codigo_curso,
+            nota=nota,
+            frequencia=frequencia
+        )
+        
+        # Remove matrícula ativa
+        del self.matriculas[chave]
+        self.save_all()
+        
+        return True, "Matrícula concluída e adicionada ao histórico"
 
     def alunos_por_turma(self, id_turma):
         if id_turma not in self.turmas:

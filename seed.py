@@ -2,9 +2,10 @@ from src.core.repository import Repository
 from src.models.curso import Curso
 from src.models.aluno import Aluno
 from src.models.turma import Turma
+from src.core.db import repo
 
 
-repo = Repository()
+repo = Repository(mem=False)
 
 repo.cursos = {
     "MAT101": Curso("MAT101", "Cálculo I", 60, []).__dict__,

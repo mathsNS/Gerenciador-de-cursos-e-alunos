@@ -1,12 +1,15 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from src.core.container import sistema
+from src.core.repository import Repository
+from fastapi import HTTPException
 
 router = APIRouter(prefix="/matriculas", tags=["Matrículas"])
 
 class MatricularDTO(BaseModel):
-    aluno: str
-    turma: str
+    matricula_aluno: str
+    id_turma: str
+
 
 class NotaDTO(BaseModel):
     nota: float
@@ -15,17 +18,16 @@ class FrequenciaDTO(BaseModel):
     frequencia: float
 
 
-@router.post("/")
-def criar_matricula(dto: MatricularDTO):
-    aluno = sistema.repo.alunos.get(dto.aluno)
-    turma = sistema.repo.turmas.get(dto.turma)
-
-    if aluno is None or turma is None:
-        return {"sucesso": False, "mensagem": "Aluno ou turma não encontrados"}
-
-    ok, msg = sistema.matricular(aluno, turma)
-    return {"sucesso": ok, "mensagem": msg}
-
+@router.post("/matriculas/")
+def criar_matricula(dados: MatricularDTO):
+    try:
+        matricula = sistema.repo.add_matricula(
+            aluno_id=dados.matricula_aluno,
+            turma_id=dados.id_turma
+        )
+        return {"status": "ok", "matricula": f"{dados.matricula_aluno}_{dados.id_turma}"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/{aluno}/{turma}/nota")
 def lancar_nota(aluno: str, turma: str, body: NotaDTO):

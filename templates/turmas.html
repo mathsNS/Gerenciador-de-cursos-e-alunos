@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Turmas</h2>
+    <table class="table table-hover">
+      <thead><tr><th>ID</th><th>Curso</th><th>Período</th><th>Vagas</th></tr></thead>
+      <tbody>
+      {% for t in turmas %}
+        <tr>
+          <td>{{ t.id_turma }}</td>
+          <td>{{ t.codigo_curso }}</td>
+          <td>{{ t.periodo }}</td>
+          <td>{{ t.vagas }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4">Nenhuma turma</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

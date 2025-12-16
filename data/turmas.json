@@ -8,7 +8,6 @@
     },
     "vagas": 40,
     "local": "Bloco A",
-    "matriculas": [],
     "aberta": true
   },
   "T2": {
@@ -20,7 +19,6 @@
     },
     "vagas": 40,
     "local": "Bloco B",
-    "matriculas": [],
     "aberta": true
   }
 }

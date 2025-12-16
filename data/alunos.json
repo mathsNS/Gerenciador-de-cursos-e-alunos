@@ -3,14 +3,18 @@
     "matricula": "1",
     "nome": "João",
     "email": "j@j.com",
-    "historico": [],
-    "cursos_concluidos": []
+    "historico": []
   },
   "2": {
     "matricula": "2",
     "nome": "Maria",
     "email": "m@m.com",
-    "historico": [],
-    "cursos_concluidos": []
+    "historico": []
+  },
+  "3": {
+    "matricula": "3",
+    "nome": "Pedro",
+    "email": "Pedro@ex.com",
+    "historico": "MAT101"
   }
 }

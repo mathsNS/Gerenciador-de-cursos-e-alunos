@@ -31,7 +31,7 @@ class Sistema:
         self.cursos = {}
         self.alunos = {}
         self.turmas = {}
-        self.matriculas = []
+        self.matriculas = {}
         self.settings = _load_settings()
 
     # encontra objeto Matricula por aluno+turma
@@ -99,8 +99,38 @@ class Sistema:
     
 class SistemaAcademico:
     def __init__(self):
-        self.repo = Repository()
+        self.repo = Repository(mem=False)
 
+    def lancar_nota(self, aluno, turma, nota):
+        return self.repo.lancar_nota(aluno, turma, nota)
+
+    def lancar_frequencia(self, aluno, turma, frequencia):
+        return self.repo.lancar_frequencia(aluno, turma, frequencia)
+
+    def concluir_matricula(self, aluno_id, turma_id):
+        return self.repo.concluir_matricula(aluno_id, turma_id)
+
+    def alunos_por_turma(self, id_turma):
+        turma = self.repo.turmas.get(id_turma)
+        if turma is None:
+            return None
+
+        alunos = []
+        for m in turma.matriculas:
+            aluno = self.repo.alunos.get(str(m.aluno))
+            if aluno:
+                alunos.append({
+                    "matricula": aluno.matricula,
+                    "nome": aluno.nome
+                })
+
+        return {
+            "turma": id_turma,
+            "curso": turma.codigo_curso,
+            "ocupadas": len(alunos),
+            "vagas": turma.vagas,
+            "alunos": alunos
+}
     #verificacoes
 
     def _verificar_prerequisitos(self, aluno, curso):
@@ -123,9 +153,11 @@ class SistemaAcademico:
 
     def _verificar_choque_horario(self, aluno, nova_turma):
         for m in self.repo.matriculas.values():
-            if m.aluno == aluno.matricula and m.turma.periodo == nova_turma.periodo:
-                if self._horarios_colidem(m.turma.horarios, nova_turma.horarios):
-                    return True
+            if m.aluno == aluno.matricula:
+                turma_atual = self.repo.turmas.get(m.turma)
+                if turma_atual and turma_atual.periodo == nova_turma.periodo:
+                    if self._horarios_colidem(turma_atual.horarios, nova_turma.horarios):
+                        return True
         return False
 
     #matricula
@@ -148,28 +180,7 @@ class SistemaAcademico:
             return False, "Choque de horário detectado."
 
         #criar matrícula
-        nova = Matricula(aluno=aluno.matricula, turma=turma.id_turma)
-        self.repo.adicionar_matricula(nova)
-
+        self.repo.add_matricula(matricula_aluno, id_turma)
         return True, "Matrícula realizada com sucesso."
 
     #relatorio
-
-    def alunos_por_turma(self, id_turma):
-        turma = self.repo.turmas.get(id_turma)
-        if turma is None:
-            return None
-
-        alunos = [
-            self.repo.alunos[m.aluno].nome
-            for m in self.repo.matriculas.values()
-            if m.turma == id_turma
-        ]
-
-        return {
-            "turma": id_turma,
-            "curso": turma.codigo_curso,
-            "ocupadas": len(alunos),
-            "vagas": turma.vagas,
-            "alunos": alunos
-        }
